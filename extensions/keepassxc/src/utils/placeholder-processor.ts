@@ -1,9 +1,6 @@
 import { getTOTPCode } from "./totp";
 
-/**
- * Interface representing a KeePass entry with all its fields
- */
-export interface KeePassEntry {
+interface KeePassEntry {
   group: string;
   title: string;
   username: string;
@@ -16,9 +13,9 @@ export interface KeePassEntry {
 /**
  * Converts a string array from KeePassXC CLI to a KeePassEntry object
  * @param entry - The string array from KeePassXC CLI export
- * @returns KeePassEntry object
+ * @returns {KeePassEntry} The KeePassEntry object
  */
-export function arrayToEntry(entry: string[]): KeePassEntry {
+function arrayToEntry(entry: string[]): KeePassEntry {
   return {
     group: entry[0] || "",
     title: entry[1] || "",
@@ -34,28 +31,30 @@ export function arrayToEntry(entry: string[]): KeePassEntry {
  * Processes placeholders in a string according to KeePassXC placeholder syntax
  * @param text - The text containing placeholders
  * @param entry - The KeePass entry data for placeholder resolution
- * @returns The processed text with placeholders replaced
+ * @returns {string} The processed text with placeholders replaced
  */
-export function processPlaceholders(text: string, entry: KeePassEntry): string {
+function processPlaceholders(text: string, entry: KeePassEntry): string {
   if (!text) return text;
 
-  let processed = text;
+  text = text.replace(/{TITLE}/g, entry.title);
+  text = text.replace(/{USERNAME}/g, entry.username);
+  text = text.replace(/{PASSWORD}/g, entry.password);
+  text = text.replace(/{URL}/g, entry.url);
+  text = text.replace(/{NOTES}/g, entry.notes);
 
-  processed = processed.replace(/{TITLE}/g, entry.title);
-  processed = processed.replace(/{USERNAME}/g, entry.username);
-  processed = processed.replace(/{PASSWORD}/g, entry.password);
-  processed = processed.replace(/{URL}/g, entry.url);
-  processed = processed.replace(/{NOTES}/g, entry.notes);
-
-  // TOTP placeholder - only process if TOTP is available
+  // Only process TOTP if the entry has a TOTP URL
   if (entry.totp) {
-    try {
-      const totpCode = getTOTPCode(entry.totp);
-      processed = processed.replace(/{TOTP}/g, totpCode);
-    } catch {
-      // If TOTP generation fails, leave {TOTP} as is
-    }
+    const code = (() => {
+      try {
+        return getTOTPCode(entry.totp);
+      } catch {
+        return null;
+      }
+    })();
+    if (code) text = text.replace(/{TOTP}/g, code);
   }
 
-  return processed;
+  return text;
 }
+
+export { arrayToEntry, processPlaceholders };
