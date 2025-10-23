@@ -5,7 +5,6 @@
 ### Added
 
 - Support for KeePassXC placeholders in copy and paste actions.
-- Process placeholders like `{TOTP}`, `{USERNAME}`, `{PASSWORD}`, `{TITLE}`, `{URL}`, and `{NOTES}` when copying or pasting entry data.
 
 ## [1.7.1] - 2025-10-14
 
