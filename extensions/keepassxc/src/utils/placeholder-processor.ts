@@ -12,6 +12,7 @@ interface KeePassEntry {
 
 /**
  * Converts a string array from KeePassXC CLI to a KeePassEntry object
+ *
  * @param entry - The string array from KeePassXC CLI export
  * @returns {KeePassEntry} The KeePassEntry object
  */
@@ -29,6 +30,7 @@ function arrayToEntry(entry: string[]): KeePassEntry {
 
 /**
  * Processes placeholders in a string according to KeePassXC placeholder syntax
+ *
  * @param text - The text containing placeholders
  * @param entry - The KeePass entry data for placeholder resolution
  * @returns {string} The processed text with placeholders replaced
