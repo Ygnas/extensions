@@ -18,6 +18,7 @@ import { getFavicon } from "@raycast/utils";
 import { KeePassLoader, showToastCliErrors } from "../utils/keepass-loader";
 import { getTOTPCode } from "../utils/totp";
 import { isValidUrl } from "../utils/url-checker";
+import { arrayToEntry, processPlaceholders } from "../utils/placeholder-processor";
 
 const preferences: ExtensionPreferences = getPreferenceValues();
 // Whether to display favicons in the user interface
@@ -159,7 +160,9 @@ export default function SearchDatabase({
                       icon={Icon.BlankDocument}
                       onAction={() => {
                         if (entry[3] !== "") {
-                          Clipboard.paste(entry[3]).then(() => closeMainWindow());
+                          const entryData = arrayToEntry(entry);
+                          const processedPassword = processPlaceholders(entry[3], entryData);
+                          Clipboard.paste(processedPassword).then(() => closeMainWindow());
                         } else {
                           showToast(Toast.Style.Failure, "Error", "No Password Set");
                         }
@@ -171,7 +174,9 @@ export default function SearchDatabase({
                       shortcut={{ modifiers: ["shift"], key: "enter" }}
                       onAction={() => {
                         if (entry[2] !== "") {
-                          Clipboard.paste(entry[2]).then(() => closeMainWindow());
+                          const entryData = arrayToEntry(entry);
+                          const processedUsername = processPlaceholders(entry[2], entryData);
+                          Clipboard.paste(processedUsername).then(() => closeMainWindow());
                         } else {
                           showToast(Toast.Style.Failure, "Error", "No Username Set");
                         }
@@ -201,7 +206,9 @@ export default function SearchDatabase({
                       shortcut={{ modifiers: ["cmd"], key: "g" }}
                       onAction={() => {
                         if (entry[3] !== "") {
-                          Clipboard.copy(entry[3], { concealed: true });
+                          const entryData = arrayToEntry(entry);
+                          const processedPassword = processPlaceholders(entry[3], entryData);
+                          Clipboard.copy(processedPassword, { concealed: true });
                           showHUD("Password has been copied to clipboard");
                         } else showToast(Toast.Style.Failure, "Error", "No Password Set");
                       }}
@@ -212,7 +219,9 @@ export default function SearchDatabase({
                       shortcut={{ modifiers: ["cmd"], key: "b" }}
                       onAction={() => {
                         if (entry[2] !== "") {
-                          Clipboard.copy(entry[2]);
+                          const entryData = arrayToEntry(entry);
+                          const processedUsername = processPlaceholders(entry[2], entryData);
+                          Clipboard.copy(processedUsername);
                           showHUD("Username has been copied to clipboard");
                         } else showToast(Toast.Style.Failure, "Error", "No Username Set");
                       }}
