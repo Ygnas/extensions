@@ -1,6 +1,6 @@
 # KeePassXC Extension Changelog
 
-## [1.8.0] - {PR_MERGE_DATE}
+## [1.8.0] - 2025-10-27
 
 ### Added
 
